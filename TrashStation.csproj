@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>BUG_TrashStation</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>  <!-- versions are set in src/Plugin.cs -->
+    <!-- Override for your install: dotnet build -c Release "-p:DSPGamePath=..." "-p:BepInExCorePath=..." -->
+    <DSPGamePath Condition="'$(DSPGamePath)' == ''">D:\Games\Dyson Sphere Program</DSPGamePath>
+    <BepInExCorePath Condition="'$(BepInExCorePath)' == ''">$(APPDATA)\com.kesomannen.gale\dyson-sphere-program\profiles\Default\BepInEx\core</BepInExCorePath>
+    <ManagedPath>$(DSPGamePath)\DSPGAME_Data\Managed</ManagedPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(ManagedPath)\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="$(ManagedPath)\UnityEngine*.dll" Private="false" />
+    <Reference Include="$(BepInExCorePath)\BepInEx.dll" Private="false" />
+    <Reference Include="$(BepInExCorePath)\0Harmony.dll" Private="false" />
+    <Reference Include="$(BepInExCorePath)\..\plugins\CommonAPI-CommonAPI\CommonAPI.dll" Private="false" />
+    <Reference Include="$(BepInExCorePath)\..\plugins\xiaoye97-LDBTool\LDBTool.dll" Private="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Building models and textures (made by blender/*.py), read from beside the DLL -->
+    <None Include="models\*.tsm;models\*.png" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

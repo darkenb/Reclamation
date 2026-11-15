@@ -1,0 +1,11 @@
+{
+    "name": "BUG_TrashStation",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/darkenb/TrashStation",
+    "description": "Two buildings that burn any item: a trash converter turns it into the Dark Fog item you choose, an incinerator into power.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.17",
+        "CommonAPI-CommonAPI-1.6.7",
+        "xiaoye97-LDBTool-3.0.3"
+    ]
+}
