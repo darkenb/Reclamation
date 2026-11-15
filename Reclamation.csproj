@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <AssemblyName>BUG_TrashStation</AssemblyName>
+    <AssemblyName>BUG_Reclamation</AssemblyName>
     <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>  <!-- versions are set in src/Plugin.cs -->
     <!-- Override for your install: dotnet build -c Release "-p:DSPGamePath=..." "-p:BepInExCorePath=..." -->

@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace TrashStation
 {
-    [BepInPlugin(Guid, "BUG_TrashStation", "1.0.0")]
+    [BepInPlugin(Guid, "BUG_Reclamation", "1.0.0")]
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency("me.xiaoye97.plugin.Dyson.LDBTool")]
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]
@@ -312,7 +312,7 @@ namespace TrashStation
         {
             if (LDB.techs.Exist(TechId)) throw new InvalidOperationException("tech id " + TechId + " is taken by another mod");
             Tech.Layout(LDB.techs.dataArray, out float x0, out float dx, out float y0);
-            var tech = Tech.New(TechId, Lang.T("Trash Processing"),
+            var tech = Tech.New(TechId, Lang.T("Reclamation"),
                 Lang.T("Buildings that burn any item for points: a trash converter that turns them into Dark Fog items, and an incinerator that turns them into power."),
                 "Icons/ItemRecipe/fuel-plant", Tech.Unlocking(PlantItem), new[] { ConverterItem, IncineratorItem }, new Vector2(x0, y0));
             Tech.Insert(new[] { tech });

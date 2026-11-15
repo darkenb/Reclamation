@@ -33,7 +33,7 @@ namespace TrashStation
                 "被焚烧物品的热量，存放在焚化炉中：每份为 100 kJ 燃料。只有焚化炉能燃烧它。",
                 "Yakılan eşyaların ısısı; bir yakma fırınında bekler: her biri 100 kJ yakıttır. Yalnızca yakma fırını yakar.",
             },
-            ["Trash Processing"] = new[] { "垃圾处理", "Çöp İşleme" },
+            ["Reclamation"] = new[] { "回收", "Geri Kazanım" },
             ["Buildings that burn any item for points: a trash converter that turns them into Dark Fog items, and an incinerator that turns them into power."] = new[]
             {
                 "将任何物品焚烧为点数的建筑：把点数转换为黑雾物品的垃圾转换器，以及把点数转化为电力的焚化炉。",

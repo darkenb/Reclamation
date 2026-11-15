@@ -1,8 +1,8 @@
-# BUG_TrashStation
+# BUG_Reclamation
 
 Two buildings for everything you no longer need. Both burn any item, ammunition and buildings included. The **Trash Converter** turns what it burns into the Dark Fog item you choose, the **Incinerator** turns it into power.
 
-Both are unlocked by the technology **Trash Processing**, which sits on a new row at the bottom of the main tech page and opens once the thermal power plant is researched (on a changed tech tree: whatever unlocks it there). The buildings are in the replicator next to the assembler and the thermal plant. On the build bar they take free keys in the production and power categories; when the power category is full (as with GenesisBook) the incinerator goes beside the converter. A layout saved with Rebind Build Bar is kept.
+Both are unlocked by the technology **Reclamation**, which sits on a new row at the bottom of the main tech page and opens once the thermal power plant is researched (on a changed tech tree: whatever unlocks it there). The buildings are in the replicator next to the assembler and the thermal plant. On the build bar they take free keys in the production and power categories; when the power category is full (as with GenesisBook) the incinerator goes beside the converter. A layout saved with Rebind Build Bar is kept.
 
 ## Points
 
@@ -75,7 +75,7 @@ You need a current .NET SDK and the .NET Framework 4.7.2 targeting pack. The gam
 dotnet build -c Release "-p:DSPGamePath=D:\Games\Dyson Sphere Program" "-p:BepInExCorePath=C:\path\to\BepInEx\core"
 ```
 
-The output is `bin/Release/net472/BUG_TrashStation.dll`. Copy it, with the model files built next to it (`*.tsm`, `*.png`), to `BepInEx/plugins/BUG_TrashStation/`.
+The output is `bin/Release/net472/BUG_Reclamation.dll`. Copy it, with the model files built next to it (`*.tsm`, `*.png`), to `BepInEx/plugins/BUG_Reclamation/`.
 
 ## License
 
