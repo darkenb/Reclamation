@@ -10,12 +10,12 @@ using CommonAPI.Systems;
 using HarmonyLib;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]
 
 namespace TrashStation
 {
-    [BepInPlugin(Guid, "BUG_Reclamation", "1.0.0")]
+    [BepInPlugin(Guid, "BUG_Reclamation", "1.0.1")]
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency("me.xiaoye97.plugin.Dyson.LDBTool")]
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]

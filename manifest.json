@@ -1,6 +1,6 @@
 {
     "name": "BUG_Reclamation",
-    "version_number": "1.0.0",
+    "version_number": "1.0.1",
     "website_url": "https://github.com/darkenb/Reclamation",
     "description": "Two buildings that burn any item: a trash converter turns it into the Dark Fog item you choose, an incinerator into power.",
     "dependencies": [
