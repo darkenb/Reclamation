@@ -10,12 +10,12 @@ using CommonAPI.Systems;
 using HarmonyLib;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.0.1.0")]
-[assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: AssemblyVersion("1.0.2.0")]
+[assembly: AssemblyFileVersion("1.0.2.0")]
 
 namespace TrashStation
 {
-    [BepInPlugin(Guid, "BUG_Reclamation", "1.0.1")]
+    [BepInPlugin(Guid, "BUG_Reclamation", "1.0.2")]
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency("me.xiaoye97.plugin.Dyson.LDBTool")]
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry))]
@@ -39,6 +39,7 @@ namespace TrashStation
         static readonly List<RecipeProto> outputRecipes = new List<RecipeProto>();
         static ModelProto converterModel, incineratorModel;
         static bool ready;
+        static Harmony patcher;
         static string dir;  // the mod's folder: the model files sit beside the dll
 
         // Points per item id; 0 = not taken (the outputs). Filled once all mods have loaded.
@@ -76,7 +77,7 @@ namespace TrashStation
             MaxPointsPerMinute = Config.Bind("Incinerator", "MaxPointsPerMinute", 5000, new ConfigDescription(
                 "Points an incinerator burns per minute at full load (each is 100 kJ of fuel, 80 kJ of power): 5000 is 6.67 MW. The thermal plant it copies burns 1620 (2.16 MW). Applies to built incinerators too, after restarting the game.",
                 new AcceptableValueRange<int>(1620, 100000))).Value;
-            var harmony = new Harmony(Guid);
+            var harmony = patcher = new Harmony(Guid);
             harmony.PatchAll(typeof(Plugin));
             harmony.PatchAll(typeof(Trash));
             harmony.PatchAll(typeof(Picker));
@@ -121,6 +122,26 @@ namespace TrashStation
         public const string PointsDesc = "Points of burned items, waiting inside a trash converter.";
         public const string HeatDesc = "Heat of burned items, waiting inside an incinerator: each is 100 kJ of fuel. Only an incinerator burns it.";
 
+        // Output recipes take up to hundreds of thousands of points per item. With every recipe handcraftable (Multifunction),
+        // the replicator plans Dark Fog items through them: count x points passed 2^31, turned negative and the game counted
+        // the input as covered, so the task was queued and waited forever. A planned amount past int range can never be had.
+        [HarmonyPrefix, HarmonyPatch(typeof(MechaForge), "TryAddTaskIterate")]
+        static bool ForgePlan(RecipeProto recipe, int count, ref bool useBottleneckItem, ref bool __result)
+        {
+            if (!Overflows(recipe, count)) return true;
+            useBottleneckItem = false;
+            __result = false;
+            return false;
+        }
+
+        public static bool Overflows(RecipeProto recipe, int count)
+        {
+            if (recipe == null) return false;
+            foreach (int n in recipe.ItemCounts ?? new int[0]) if ((long)count * n > int.MaxValue) return true;
+            foreach (int n in recipe.ResultCounts ?? new int[0]) if ((long)count * n > int.MaxValue) return true;
+            return false;
+        }
+
         // The copied building's wreck and toughness; set before the models load, the wreck prefab is read then.
         static void Ruins(ModelProto m, int ruin, int symmetry, int hp)
         {
@@ -161,7 +182,56 @@ namespace TrashStation
                 if (tech != null) Icons.Apply(tech, converter);
             }
             catch (Exception e) { Log.LogWarning("Buildings keep the copied icons: " + e.Message); }
+            try
+            {
+                Icons.Apply(points, System.IO.Path.Combine(dir, "points_icon.png"));
+                Icons.Apply(heat, System.IO.Path.Combine(dir, "heat_icon.png"));
+            }
+            catch (Exception e) { Log.LogWarning("Points and heat keep the accumulator icon: " + e.Message); }
+            try { KeepOutOfReplicator(); PatchAllHandcraft(patcher); }  // every mod is loaded by now
+            catch (Exception e) { Log.LogWarning("Output recipes stay linked to their items: " + e.Message); }
             Log.LogInfo("Set up in " + clock.ElapsedMilliseconds + " ms");
+        }
+
+        // The output recipes run only in the converter. Multifunction's "all handcraft" opened them to the replicator, which then
+        // planned Dark Fog items from points, and each output's tip showed "points -> item" as its own recipe, made in the
+        // replicator. They are kept off the outputs' main and handcraft recipes; run again after every "all handcraft" change.
+        static void KeepOutOfReplicator()
+        {
+            foreach (var r in outputRecipes)
+            {
+                r.Handcraft = false;
+                var item = LDB.items.Select(r.Results[0]);
+                if (item == null) continue;
+                item.handcrafts?.Remove(r);
+                if (item.handcraft == r)
+                {
+                    item.handcraft = item.handcrafts != null && item.handcrafts.Count > 0 ? item.handcrafts[0] : null;
+                    item.handcraftProductCount = Made(item.handcraft, item.ID);
+                }
+                if (item.maincraft == r)
+                {
+                    item.maincraft = item.recipes?.FirstOrDefault(x => x != null && !IsOutputRecipe(x.ID));
+                    item.maincraftProductCount = Made(item.maincraft, item.ID);
+                }
+            }
+        }
+
+        static int Made(RecipeProto recipe, int item) => recipe == null ? 0 : recipe.ResultCounts[Array.IndexOf(recipe.Results, item)];
+
+        // Multifunction (and BUG_ModsPatch's version of it) sets every recipe's handcraft flag and relinks the items.
+        static void PatchAllHandcraft(Harmony harmony)
+        {
+            var method = AccessTools.TypeByName("Multifunction_mod.GameModify.RecipeModify")?.GetMethod("ApplyRecipeModifications", BindingFlags.Public | BindingFlags.Static);
+            if (method == null) return;
+            harmony.Patch(method, postfix: new HarmonyMethod(typeof(Plugin), nameof(AfterAllHandcraft)));
+            Log.LogInfo("Output recipes kept out of Multifunction's all handcraft");
+        }
+
+        static void AfterAllHandcraft()
+        {
+            try { if (ready) KeepOutOfReplicator(); }
+            catch (Exception e) { Log.LogWarning("Output recipes stay linked to their items: " + e.Message); }
         }
 
         // Toughness and tip lines as the copied buildings have them in this game (content mods change them), the converter's

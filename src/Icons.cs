@@ -16,6 +16,14 @@ namespace TrashStation
             Traverse.Create(recipe).Field("_iconSprite").SetValue(sprite);
         }
 
+        // Points and heat: 80x80 pictures drawn by make-item-icons.py.
+        internal static void Apply(ItemProto item, string file)
+        {
+            var sprite = Load(file);
+            if (sprite == null) throw new FileNotFoundException("no icon", file);
+            Traverse.Create(item).Field("_iconSprite").SetValue(sprite);
+        }
+
         internal static void Apply(TechProto tech, ItemProto like) => Traverse.Create(tech).Field("_iconSprite").SetValue(like.iconSprite);
 
         static Sprite Load(string path)

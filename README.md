@@ -12,7 +12,7 @@ Neither building takes the seven items the converter makes, or anything a pump d
 
 ## Trash Converter
 
-An assembler whose input is points. Pick what it makes in its recipe list, which shows only these items; the points gather as the recipe's input and each time they reach the price, one item is made. An item worth 50 points takes 20 000 of itself for a Core Element.
+An assembler whose input is points. Pick what it makes in its recipe list, which shows only these items; the points gather as the recipe's input and each time they reach the price, one item is made. An item worth 50 points takes 20 000 of itself for a Core Element. These recipes run only in the converter, never in the replicator (also with Multifunction's "all handcraft").
 
 | Item | Price (points) |
 |---|---|
